@@ -18,6 +18,15 @@ struct TodoListView: View {
                     UpdateTodoView(todo: todo.wrappedValue)
                 } label: {
                     TodoItemRow(todo: todo)
+                        .contextMenu {
+                            Button("Add to Favorites") {
+                                
+                            }
+                            
+                            Button("Mark as Done") {
+                                
+                            }
+                        }
                 }
             })
             .onDelete { indexSet in
