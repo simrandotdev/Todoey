@@ -9,22 +9,18 @@ import SwiftUI
 
 struct HomeView: View {
     
-    @State private var todos: [Todo] = [
-        .init(title: "Wash Clothes", description: "Wash all the underwears first"),
-        
-        .init(title: "Study", description: "Study SwiftUI Today", isDone: true, isFavorite: true)
-    ]
+    @StateObject private var todoManager = TodoManager()
     @State private var showAddTodoView: Bool = false
     @State private var showSortByConfirmDialog: Bool = false
     
     var body: some View {
         NavigationStack {
             Group {
-                if todos.isEmpty {
+                if todoManager.todos.isEmpty {
                     EmptyStateView(systemImageName: "note",
                                    message: "Your list is empty. \nPlease create some todos")
                 } else {
-                    TodoListView(todos: $todos)
+                    TodoListView(todoManager: todoManager)
                 }
             }
             .navigationTitle("Todoey")
@@ -39,7 +35,7 @@ struct HomeView: View {
                 }
             }
             .sheet(isPresented: $showAddTodoView) {
-                AddTodoView()
+                AddTodoView(todoManager: todoManager)
             }
             .confirmationDialog("Sort By", isPresented: $showSortByConfirmDialog) {
                 Button("Done") {
@@ -58,6 +54,9 @@ struct HomeView: View {
                     
                 }
             }
+        }
+        .onAppear {
+            todoManager.fetch()
         }
     }
 }

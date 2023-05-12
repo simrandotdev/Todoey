@@ -9,22 +9,22 @@ import SwiftUI
 
 struct TodoListView: View {
     
-    @Binding var todos: [Todo]
+    @ObservedObject var todoManager: TodoManager
     
     var body: some View {
         List {
-            ForEach($todos, content: { todo in
+            ForEach($todoManager.todos, content: { todo in
                 NavigationLink {
-                    UpdateTodoView(todo: todo.wrappedValue)
+                    UpdateTodoView(todo: todo.wrappedValue, todoManager: todoManager)
                 } label: {
                     TodoItemRow(todo: todo)
                         .contextMenu {
-                            Button("Add to Favorites") {
-                                
+                            Button(todo.isFavorite.wrappedValue ? "Remove from Favorites" :"Add to Favorites") {
+                                todoManager.update(todo: todo.wrappedValue, isFavorites: !todo.isFavorite.wrappedValue)
                             }
                             
-                            Button("Mark as Done") {
-                                
+                            Button(todo.isDone.wrappedValue ? "Mark as Undone" : "Mark as Done") {
+                                todoManager.update(todo: todo.wrappedValue, isDone: !todo.isDone.wrappedValue)
                             }
                         }
                 }
@@ -38,6 +38,6 @@ struct TodoListView: View {
 
 struct TodoListView_Previews: PreviewProvider {
     static var previews: some View {
-        TodoListView(todos: .constant([]))
+        TodoListView(todoManager: TodoManager())
     }
 }

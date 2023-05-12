@@ -16,7 +16,7 @@ struct RoundedSystemImageToolbarItem: ToolbarContent {
     var body: some ToolbarContent {
         ToolbarItem(placement: .bottomBar) {
             Button {
-               action()
+                action()
             } label: {
                 Circle()
                     .frame(width: 64, height: 64)

@@ -11,12 +11,16 @@ struct UpdateTodoView: View {
     @State private var title: String = ""
     @State private var description: String = ""
     @State private var addToFavorites: Bool = false
+    @State private var showConfirmDeleteDialog: Bool = false
     @Environment(\.dismiss) var dismiss
+    
+    @ObservedObject var todoManager: TodoManager
     
     private var todo: Todo
     
-    init(todo: Todo) {
+    init(todo: Todo, todoManager: TodoManager) {
         self.todo = todo
+        self.todoManager = todoManager
     }
     
     var body: some View {
@@ -34,13 +38,13 @@ struct UpdateTodoView: View {
                 Toggle("Add to Favorites", isOn: $addToFavorites)
                 
                 FormButton(title: "Update") {
-                    
+                    todoManager.update(todo: todo, withTitle: title, description: description, isDone: todo.isDone, isFavorites: addToFavorites)
                     dismiss()
                 }
                 .foregroundColor(.green)
                 
-                FormButton(title: "Mark as done") {
-                    
+                FormButton(title: todo.isDone ? "Mark as Undone" :"Mark as done") {
+                    todoManager.update(todo: todo, withTitle: title, description: description, isDone: !todo.isDone, isFavorites: addToFavorites)
                     dismiss()
                 }
                 .foregroundColor(.accentColor)
@@ -48,7 +52,18 @@ struct UpdateTodoView: View {
             .navigationTitle("Add a new Todo")
             .toolbar {
                 RoundedSystemImageToolbarItem(placement: .bottomBar, systemImageName: "xmark.bin") {
-                    
+                    showConfirmDeleteDialog = true
+                }
+            }
+            .confirmationDialog("Are you sure you want to delete this", isPresented: $showConfirmDeleteDialog) {
+                Button("No") {
+                    dismiss()
+                }
+                
+                
+                Button("Yes") {
+                    todoManager.delete(todo)
+                    dismiss()
                 }
             }
         }
@@ -63,6 +78,6 @@ struct UpdateTodoView: View {
 
 struct UpdateTodoView_Previews: PreviewProvider {
     static var previews: some View {
-        UpdateTodoView(todo: .init(title: "Wash Clothes", description: "Wash all the clothes today and fold them"))
+        UpdateTodoView(todo: .init(title: "Wash Clothes", description: "Wash all the clothes today and fold them"), todoManager: .init())
     }
 }

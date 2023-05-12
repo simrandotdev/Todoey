@@ -13,6 +13,7 @@ struct AddTodoView: View {
     @State private var description: String = ""
     @State private var addToFavorites: Bool = false
     @Environment(\.dismiss) var dismiss
+    @ObservedObject var todoManager: TodoManager
     
     var body: some View {
         NavigationStack {
@@ -30,6 +31,7 @@ struct AddTodoView: View {
                 
                 FormButton(title: "Save") {
                     
+                    todoManager.save(title: title, description: description, isFavorites: addToFavorites)
                     dismiss()
                 }
                 .foregroundColor(.green)
@@ -41,6 +43,6 @@ struct AddTodoView: View {
 
 struct AddTodoView_Previews: PreviewProvider {
     static var previews: some View {
-        AddTodoView()
+        AddTodoView(todoManager: .init())
     }
 }
