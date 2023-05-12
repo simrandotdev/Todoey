@@ -20,7 +20,7 @@ struct TodoListView: View {
                     TodoItemRow(todo: todo)
                         .contextMenu {
                             Button(todo.isFavorite.wrappedValue ? "Remove from Favorites" :"Add to Favorites") {
-                                todoManager.update(todo: todo.wrappedValue, isFavorites: !todo.isFavorite.wrappedValue)
+                                todoManager.update(todo: todo.wrappedValue, isFavorite: !todo.isFavorite.wrappedValue)
                             }
                             
                             Button(todo.isDone.wrappedValue ? "Mark as Undone" : "Mark as Done") {

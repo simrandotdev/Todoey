@@ -7,7 +7,13 @@
 
 import Foundation
 
-class PersistanceService {
+protocol PersistanceServicable {
+    
+    func read() throws -> Data
+    func write(_ data: Data) throws
+}
+
+class FileManagerPersistanceService: PersistanceServicable {
     
     private var fileManager: FileManager
     private var filePath: URL
@@ -23,7 +29,7 @@ class PersistanceService {
     }
     
     
-    func fetch() throws -> Data {
+    func read() throws -> Data {
         
         if !fileManager.fileExists(atPath: filePath.relativePath) {
             fileManager.createFile(atPath: filePath.relativePath, contents: nil)
@@ -32,7 +38,7 @@ class PersistanceService {
         return try Data(contentsOf: filePath)
     }
     
-    func save(_ data: Data) throws{
+    func write(_ data: Data) throws {
         
         if !fileManager.fileExists(atPath: filePath.absoluteString) {
             fileManager.createFile(atPath: filePath.absoluteString, contents: nil)

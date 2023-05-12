@@ -8,33 +8,64 @@
 import Foundation
 import SwiftUI
 
+
 class TodoManager: ObservableObject {
     
     @Published var todos: [Todo] = []
+    
+    private var todoService: TodoServicable
+    
+    init(persistanceService: TodoServicable = TodoFileManagerService()) {
+        self.todoService = persistanceService
+    }
 
     func fetch() {
-        todos = Todo.fetch()
-        
-        if let sort = UserDefaults.standard.value(forKey: "sortBy") as? String,
-           let sortType = SortBy(rawValue: sort) {
-            sortBy(sortType)
+        do {
+            self.todos = try todoService.fetch()
+            
+            if let sort = UserDefaults.standard.value(forKey: "sortBy") as? String,
+               let sortType = SortBy(rawValue: sort) {
+                sortBy(sortType)
+            }
+        } catch {
+            print("❌ Error in \(#function) ", error)
         }
     }
     
     func save(title: String, description: String, isDone: Bool = false, isFavorites: Bool = false) {
         let todo = Todo(title: title, description: description, isFavorite: isFavorites)
-        todo.save()
-        todos.append(todo)
+        
+        do {
+            try todoService.save(todo: todo)
+            
+            self.todos.append(todo)
+        } catch {
+            print("❌ Error in \(#function) ", error)
+        }
     }
     
-    func update(todo: Todo, withTitle title: String? = nil, description: String? = nil, isDone: Bool? = nil, isFavorites: Bool? = nil) {
-        todo.update(title: title, description: description, isDone: isDone, isFavorite: isFavorites)
-        fetch()
+    func update(todo: Todo, withTitle title: String? = nil, description: String? = nil, isDone: Bool? = nil, isFavorite: Bool? = nil) {
+
+        do {
+            let newTodo = Todo(title: title ?? todo.title,
+                                   description: description ?? todo.description,
+                                   isDone: isDone ?? todo.isDone,
+                                   isFavorite: isFavorite ?? todo.isFavorite)
+            try todoService.update(todo: todo, with: newTodo)
+            fetch()
+        } catch {
+            print("❌ Error in \(#function) ", error)
+        }
     }
     
     func delete(_ todo: Todo) {
-        todo.delete()
-        fetch()
+        do {
+            try todoService.delete(todo)
+            fetch()
+        } catch {
+            print("❌ Error in \(#function) ", error)
+        }
+        
     }
     
     func sortBy(_ sortType: SortBy) {

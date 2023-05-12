@@ -36,6 +36,11 @@ struct UpdateTodoView: View {
                 }
                 
                 Toggle("Add to Favorites", isOn: $addToFavorites)
+                
+                FormButton(title: todo.isDone ? "Mark Undone" : "Mark Done") {
+                    todoManager.update(todo: todo, isDone: !todo.isDone)
+                    dismiss()
+                }
             }
             .navigationTitle("Add a new Todo")
             .toolbar {
@@ -62,7 +67,7 @@ struct UpdateTodoView: View {
         .toolbar {
             ToolbarItem {
                 Button("Update") {
-                    todoManager.update(todo: todo, withTitle: title, description: description, isDone: todo.isDone, isFavorites: addToFavorites)
+                    todoManager.update(todo: todo, withTitle: title, description: description, isDone: todo.isDone, isFavorite: addToFavorites)
                     dismiss()
                 }
             }
