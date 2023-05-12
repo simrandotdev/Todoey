@@ -28,15 +28,16 @@ struct AddTodoView: View {
                 }
                 
                 Toggle("Add to Favorites", isOn: $addToFavorites)
-                
-                FormButton(title: "Save") {
-                    
-                    todoManager.save(title: title, description: description, isFavorites: addToFavorites)
-                    dismiss()
-                }
-                .foregroundColor(.green)
             }
             .navigationTitle("Add a new Todo")
+            .toolbar {
+                ToolbarItem {
+                    Button("Save") {
+                        todoManager.save(title: title, description: description, isFavorites: addToFavorites)
+                        dismiss()
+                    }
+                }
+            }
         }
     }
 }

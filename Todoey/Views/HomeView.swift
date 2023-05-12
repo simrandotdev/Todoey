@@ -39,19 +39,19 @@ struct HomeView: View {
             }
             .confirmationDialog("Sort By", isPresented: $showSortByConfirmDialog) {
                 Button("Done") {
-                    
+                    todoManager.sortBy(.done)
                 }
                 
                 Button("Favorites") {
-                    
+                    todoManager.sortBy(.favorites)
                 }
                 
                 Button("Created By") {
-                    
+                    todoManager.sortBy(.creation)
                 }
                 
                 Button("Updated By") {
-                    
+                    todoManager.sortBy(.updation)
                 }
             }
         }

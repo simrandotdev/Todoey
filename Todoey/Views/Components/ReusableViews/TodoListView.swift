@@ -30,7 +30,8 @@ struct TodoListView: View {
                 }
             })
             .onDelete { indexSet in
-                
+                guard let index = indexSet.first else { return }
+                todoManager.delete(todoManager.todos[index])
             }
         }
     }
