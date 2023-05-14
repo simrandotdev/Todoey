@@ -12,16 +12,13 @@ struct UpdateTodoView: View {
     @State private var description: String = ""
     @State private var addToFavorites: Bool = false
     @State private var showConfirmDeleteDialog: Bool = false
+    @State private var doneButtonTitle: String = ""
+    @State private var isDone: Bool = false
+    
     @Environment(\.dismiss) var dismiss
     
+    @Binding var todo: Todo
     @ObservedObject var todoManager: TodoManager
-    
-    private var todo: Todo
-    
-    init(todo: Todo, todoManager: TodoManager) {
-        self.todo = todo
-        self.todoManager = todoManager
-    }
     
     var body: some View {
         NavigationStack {
@@ -37,9 +34,8 @@ struct UpdateTodoView: View {
                 
                 Toggle("Add to Favorites", isOn: $addToFavorites)
                 
-                FormButton(title: todo.isDone ? "Mark Undone" : "Mark Done") {
-                    todoManager.update(todo: todo, isDone: !todo.isDone)
-                    dismiss()
+                FormButton(title: doneButtonTitle) {
+                    isDone = !isDone
                 }
             }
             .navigationTitle("Add a new Todo")
@@ -56,6 +52,7 @@ struct UpdateTodoView: View {
                 Button("Yes") {
                     todoManager.delete(todo)
                     dismiss()
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
                 }
             }
         }
@@ -63,14 +60,20 @@ struct UpdateTodoView: View {
             title = todo.title
             description = todo.description
             addToFavorites = todo.isFavorite
+            isDone = todo.isDone
+            doneButtonTitle = isDone ? "Mark Undone" : "Mark Done"
         }
         .toolbar {
             ToolbarItem {
                 Button("Update") {
-                    todoManager.update(todo: todo, withTitle: title, description: description, isDone: todo.isDone, isFavorite: addToFavorites)
+                    todoManager.update(todo: todo, withTitle: title, description: description, isDone: isDone, isFavorite: addToFavorites)
                     dismiss()
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
                 }
             }
+        }
+        .onChange(of: isDone) { isDone in
+            doneButtonTitle = isDone ? "Mark Undone" : "Mark Done"
         }
     }
     
@@ -78,6 +81,6 @@ struct UpdateTodoView: View {
 
 struct UpdateTodoView_Previews: PreviewProvider {
     static var previews: some View {
-        UpdateTodoView(todo: .init(title: "Wash Clothes", description: "Wash all the clothes today and fold them"), todoManager: .init())
+        UpdateTodoView(todo: .constant(.init(title: "Wash Clothes", description: "Wash all the clothes today and fold them")), todoManager: .init())
     }
 }

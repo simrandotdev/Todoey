@@ -7,13 +7,13 @@
 
 import Foundation
 
-protocol PersistanceServicable {
+protocol PersistanceServicableProtocol {
     
     func read() throws -> Data
     func write(_ data: Data) throws
 }
 
-class FileManagerPersistanceService: PersistanceServicable {
+class FileManagerPersistanceService: PersistanceServicableProtocol {
     
     private var fileManager: FileManager
     private var filePath: URL

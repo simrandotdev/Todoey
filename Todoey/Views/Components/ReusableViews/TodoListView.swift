@@ -15,7 +15,7 @@ struct TodoListView: View {
         List {
             ForEach($todoManager.todos, content: { todo in
                 NavigationLink {
-                    UpdateTodoView(todo: todo.wrappedValue, todoManager: todoManager)
+                    UpdateTodoView(todo: todo, todoManager: todoManager)
                 } label: {
                     TodoItemRow(todo: todo)
                         .contextMenu {

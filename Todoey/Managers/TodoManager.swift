@@ -13,9 +13,9 @@ class TodoManager: ObservableObject {
     
     @Published var todos: [Todo] = []
     
-    private var todoService: TodoServicable
+    private var todoService: any FileManagerServicableProtocol<Todo>
     
-    init(persistanceService: TodoServicable = TodoFileManagerService()) {
+    init(persistanceService: any FileManagerServicableProtocol<Todo> = TodoFileManagerService()) {
         self.todoService = persistanceService
     }
 
@@ -36,7 +36,7 @@ class TodoManager: ObservableObject {
         let todo = Todo(title: title, description: description, isFavorite: isFavorites)
         
         do {
-            try todoService.save(todo: todo)
+            try todoService.save(item: todo)
             
             self.todos.append(todo)
         } catch {

@@ -35,6 +35,7 @@ struct AddTodoView: View {
                     Button("Save") {
                         todoManager.save(title: title, description: description, isFavorites: addToFavorites)
                         dismiss()
+                        UINotificationFeedbackGenerator().notificationOccurred(.success)
                     }
                 }
             }
