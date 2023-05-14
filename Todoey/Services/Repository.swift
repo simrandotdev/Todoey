@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol FileManagerServicableProtocol<T> {
+protocol Repository<T> {
     
     associatedtype T: Codable where T: Identifiable
     
@@ -17,11 +17,10 @@ protocol FileManagerServicableProtocol<T> {
     func delete(_ item: T) throws
 }
 
-extension FileManagerServicableProtocol {
+
+extension Repository {
     
-    private var persistanceService: PersistanceServicableProtocol?  {
-        return FileManagerPersistanceService(fileName: "\(self).json")
-    }
+    private var persistanceService: PersistanceServicableProtocol?  { FileManagerPersistanceService(fileName: "\(self).json")}
     private var encoder: JSONEncoder { JSONEncoder() }
     private var decoder: JSONDecoder { JSONDecoder() }
     

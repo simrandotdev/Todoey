@@ -13,15 +13,15 @@ class TodoManager: ObservableObject {
     
     @Published var todos: [Todo] = []
     
-    private var todoService: any FileManagerServicableProtocol<Todo>
+    private var todoRepository: any Repository<Todo>
     
-    init(persistanceService: any FileManagerServicableProtocol<Todo> = TodoFileManagerService()) {
-        self.todoService = persistanceService
+    init(persistanceService: any Repository<Todo> = TodoRepository()) {
+        self.todoRepository = persistanceService
     }
 
     func fetch() {
         do {
-            self.todos = try todoService.fetch()
+            self.todos = try todoRepository.fetch()
             
             if let sort = UserDefaults.standard.value(forKey: "sortBy") as? String,
                let sortType = SortBy(rawValue: sort) {
@@ -36,7 +36,7 @@ class TodoManager: ObservableObject {
         let todo = Todo(title: title, description: description, isFavorite: isFavorites)
         
         do {
-            try todoService.save(item: todo)
+            try todoRepository.save(item: todo)
             
             self.todos.append(todo)
         } catch {
@@ -51,7 +51,7 @@ class TodoManager: ObservableObject {
                                    description: description ?? todo.description,
                                    isDone: isDone ?? todo.isDone,
                                    isFavorite: isFavorite ?? todo.isFavorite)
-            try todoService.update(todo: todo, with: newTodo)
+            try todoRepository.update(todo: todo, with: newTodo)
             fetch()
         } catch {
             print("❌ Error in \(#function) ", error)
@@ -60,7 +60,7 @@ class TodoManager: ObservableObject {
     
     func delete(_ todo: Todo) {
         do {
-            try todoService.delete(todo)
+            try todoRepository.delete(todo)
             fetch()
         } catch {
             print("❌ Error in \(#function) ", error)

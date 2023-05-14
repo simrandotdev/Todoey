@@ -11,6 +11,7 @@ protocol PersistanceServicableProtocol {
     
     func read() throws -> Data
     func write(_ data: Data) throws
+    func delete() throws
 }
 
 class FileManagerPersistanceService: PersistanceServicableProtocol {
@@ -45,5 +46,11 @@ class FileManagerPersistanceService: PersistanceServicableProtocol {
         }
         
         try data.write(to: filePath)
+    }
+    
+    func delete() throws {
+        if fileManager.fileExists(atPath: filePath.absoluteString) {
+            try fileManager.removeItem(atPath: filePath.absoluteString)
+        }
     }
 }
